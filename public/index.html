@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Helllo Socket.IO</title>
+  <style>
+    textarea {
+      width: 10vw;
+      margin-bottom: 1rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input {
+      width: 7vw;
+      height: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      width: 3vw;
+      border-radius: 10px;
+    }
+
+  </style>
+</head>
+
+<body>
+  
+  <ul id="message"></ul>
+  <form id="form" action="">
+    <label for="userName">Enter your name here</label>
+    <input type="text" id="userName">
+    <label for="userMessage">Message</label>
+    <textarea id="userMessage" autocomplete="off" rows="10"></textarea>
+    <button>Send</button>
+  </form>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    let message = document.getElementById('message');
+    let form = document.getElementById('form');
+    let input = document.getElementById('userMessage');
+    let nickname = document.getElementById('userName')
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if(nickname.value) {
+        socket.emit('newUser', nickname.value)
+      }
+      if (input.value) {
+        socket.emit('chat message', input.value);
+        input.value = '';
+      }
+    });
+    socket.on('new user', (msg) => {
+      let item = document.createElement('li');
+      item.textContent = msg;
+      message.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+    })
+    socket.on('chat message', (msg) => {
+      let item = document.createElement('li');
+      item.textContent = msg;
+      message.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+  </script>
+</body>
+
+</html>
